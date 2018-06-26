@@ -81,19 +81,28 @@ public class MainActivityFragment extends Fragment {
       .setReportDelay(0)
       .build();
 
+
   // The Eddystone-UID frame type byte.
   // See https://github.com/google/eddystone for more information.
-  private static final byte EDDYSTONE_UID_FRAME_TYPE = 0x00;
+  private static final byte EDDYSTONE_EID_FRAME_TYPE = 0x30;
+    private static final byte EDDYSTONE_UID_FRAME_TYPE = 0x00;
+//    private static final byte EDDYSTONE_TLM_FRAME_TYPE = 0x20;
+//    private static final byte EDDYSTONE_URL_FRAME_TYPE = 0x10;
+
 
   // The Eddystone Service UUID, 0xFEAA.
   private static final ParcelUuid EDDYSTONE_SERVICE_UUID =
-    ParcelUuid.fromString("0000FEAA-0000-1000-8000-00805F9B34FB");
+            ParcelUuid.fromString("0000FEAA-0000-1000-8000-00805F9B34FB");
+    private static final ParcelUuid EDDYSTONE_SERVICE_EID =
+            ParcelUuid.fromString("A3C87500-8ED3-4BDF-8A39-A01BEBEDE295");
+    //0000feaa-0000-1000-8000-00805f9b34fb
 
   // A filter that scans only for devices with the Eddystone Service UUID.
   private static final ScanFilter EDDYSTONE_SCAN_FILTER = new ScanFilter.Builder()
-    .setServiceUuid(EDDYSTONE_SERVICE_UUID)
+          .setServiceUuid(EDDYSTONE_SERVICE_UUID)
     .build();
 
+    //.setServiceUuid(EDDYSTONE_SERVICE_UUID)
   private static final List<ScanFilter> SCAN_FILTERS = buildScanFilters();
 
   private static List<ScanFilter> buildScanFilters() {
@@ -135,23 +144,32 @@ public class MainActivityFragment extends Fragment {
           return;
         }
 
-        byte[] serviceData = scanRecord.getServiceData(EDDYSTONE_SERVICE_UUID);
-        if (serviceData == null) {
-          return;
-        }
+//        byte[] serviceData = scanRecord.getServiceData(EDDYSTONE_SERVICE_UUID);
+//        if (serviceData == null) {
+//          return;
+//        }
 
+          byte[] serviceData1 = scanRecord.getServiceData(EDDYSTONE_SERVICE_UUID);
+          if (serviceData1 == null) {
+              return;
+          }
         // We're only interested in the UID frame time since we need the beacon ID to register.
-        if (serviceData[0] != EDDYSTONE_UID_FRAME_TYPE) {
-          return;
-        }
+      // serviceData[0] != EDDYSTONE_UID_FRAME_TYPE  &&
+          if (serviceData1[0] != EDDYSTONE_EID_FRAME_TYPE ) {
+              return;
+          }
 
         // Extract the beacon ID from the service data. Offset 0 is the frame type, 1 is the
         // Tx power, and the next 16 are the ID.
         // See https://github.com/google/eddystone/eddystone-uid for more information.
-        byte[] id = Arrays.copyOfRange(serviceData, 2, 18);
-        if (arrayListContainsId(arrayList, id)) {
-          return;
-        }
+//        byte[] id = Arrays.copyOfRange(serviceData, 2, 18);
+//        if (arrayListContainsId(arrayList, id)) {
+//          return;
+//        }
+       byte[] id = Arrays.copyOfRange(serviceData1, 2, 18);
+          if (arrayListContainsId(arrayList, id)) {
+              return;
+          }
 
         // Draw it immediately and kick off a async request to fetch the registration status,
         // redrawing when the server returns.
@@ -330,6 +348,8 @@ public class MainActivityFragment extends Fragment {
     });
 
     accountNameView = (TextView)rootView.findViewById(R.id.accountName);
+    //Add Logic Here to automate the viewing of attachments of the nearest beacon
+      String str = accountNameView.getText().toString();
     accountNameView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -367,7 +387,9 @@ public class MainActivityFragment extends Fragment {
         }
         Bundle bundle = new Bundle();
         bundle.putString("accountName", accountNameView.getText().toString());
+        Log.e(TAG , "Account Name :: " + accountNameView.getText().toString());
         bundle.putParcelable("beacon", arrayAdapter.getItem(position));
+        Log.e(TAG , "Beacon :: " + arrayAdapter.getItem(position));
         ManageBeaconFragment fragment = new ManageBeaconFragment();
         fragment.setArguments(bundle);
         getFragmentManager()

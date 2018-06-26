@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 24
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "com.google.sample.beaconservice"
-        minSdkVersion 22
-        targetSdkVersion 22
+        minSdkVersion 14
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
         multiDexEnabled = true
@@ -21,7 +21,12 @@ android {
 }
 
 dependencies {
-    compile project(':libproximitybeacon')
-    compile 'joda-time:joda-time:2.8'
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':libproximitybeacon')
+    implementation 'joda-time:joda-time:2.8'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'org.jetbrains:annotations-java5:15.0'
+    implementation 'com.google.android.gms:play-services:7.5.0'
+
+    implementation 'com.squareup.okhttp:okhttp:2.4.0'
+
 }
