@@ -94,4 +94,10 @@ public interface ProximityBeacon {
    */
   void listNamespaces(Callback callback);
 
+
+  /**
+   * https://developers.google.com/beacons/proximity/reference/rest/v1beta1/eidparams
+   */
+  void getEidparams(Callback callback);
+
 }

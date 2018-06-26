@@ -60,6 +60,11 @@ public class ProximityBeaconImpl implements ProximityBeacon {
   }
 
   @Override
+  public void getEidparams(Callback callback)
+  {
+    new AuthTask("eidparams" , POST  , "" , callback).execute();
+  }
+  @Override
   public void activateBeacon(Callback callback, String beaconName) {
     new AuthTask(beaconName + ":activate", POST, "", callback).execute();
   }

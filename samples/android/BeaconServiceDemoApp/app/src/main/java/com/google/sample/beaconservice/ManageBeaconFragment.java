@@ -273,6 +273,36 @@ public class ManageBeaconFragment extends Fragment {
       }
     };
     client.listNamespaces(listNamespacesCallback);
+
+    Callback callback = new Callback() {
+        @Override
+        public void onFailure(Request request, IOException e) {
+            logErrorAndToast("Failed request: " + request, e);
+        }
+
+        @Override
+        public void onResponse(Response response) throws IOException {
+            String body = response.body().string();
+            Log.e(TAG , "Body ++++++++++++++ " + body);
+            if (response.isSuccessful())
+            {
+                try
+                {
+                    JSONObject json = new JSONObject(body);
+                    String tmp = json.getJSONObject("serviceEcdhPublicKey").getString("EidParams");
+                    Log.e(TAG , "EID Parameters : " + tmp);
+                }
+                catch (Exception ex)
+                {
+                    Log.e(TAG, "JSONException", ex);
+                }
+            }else
+            {
+                logErrorAndToast("Unsuccessful EID PARAMS request: " + body);
+            }
+        }
+    };
+    client.getEidparams(callback);
     return rootView;
   }
 
